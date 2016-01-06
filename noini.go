@@ -1,29 +1,28 @@
-// 入口文件
+// not only ini parser
 package noini
 
 type ini struct {
-	s *Storage
-	r *Router
+	s *Storage // storage for all the scections of the input path
+	r *Router  // explain the subscribe uri to session (a group of sections in different files)
 }
 
-func New(path string) (*ini, error) {
-	storage := NewStorage()
-	err := storage.ParsePath(path)
+func New(path, uriPrefix string) (*ini, error) {
+	storage := NewStorage(path, uriPrefix)
+	err := storage.Parse()
 	if err != nil {
 		return nil, err
 	}
-	router = NewRouter(storage)
-	return &ini{s: storage, r: router}
-	return i, nil
+	router := NewRouter()
+	return &ini{s: storage, r: router}, nil
 }
 
 // register your own uri router otherwise use default route parser
 func (i *ini) RegisterRouter(parser ParseFunc) {
-	r.parser = parser
+	i.r.parser = parser
 }
 
-// 订阅指定uri，按优先级传入，会返回订阅的 Session
-// 用户订阅的uri是一个Session，会根据默认的Router来解析订阅规则
-func (i *ini) SubByUri(uri []string) (*Session, error) {
-	return i.r.Parse(subs)
+// uri slice subscribed by user order by priority
+// according router to parse uri slice ,return session to user
+func (i *ini) SubByUri(uris []Uri) (*Session, error) {
+	return i.r.Parse(uris)
 }
